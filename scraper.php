@@ -9,6 +9,15 @@ require 'simple_html_dom.php';
 
 $url = 'http://www.huonvalley.tas.gov.au/services/planning-2/planningnotices/';
 
+function removeSuffix($target, $suffix) {
+    $trimmedTarget = $target;    
+    $pos = strrpos($target, $suffix);
+    if ($pos) {
+        $trimmedTarget = substr($trimmedTarget, 0, $pos);
+    }
+    return $trimmedTarget;
+}
+
 $dapage = $url;
 $html = scraperwiki::scrape($dapage);
 $dom = new simple_html_dom();
@@ -33,19 +42,17 @@ foreach ($darow as $thisrow) {
         $delim = ' - ';
         $delimpos = stripos($refdesc, $delim);
         $record['council_reference'] = substr($refdesc, 0, $delimpos - 1);
-        $record['description'] = substr($refdesc, $delimpos + strlen($delim));
-
+        $address = $cells[1]->plaintext;
 //remove address from end of description, if it's there
 //also address Australia removed and Tasmania removed
-//remember to remove any trailing delimiter
-//if no easier way, then reverse strings and check for strpos = 0
-//function removesuffix(target, suffix)
-//posrstr
-
-
-        $record['address'] = $cells[1]->plaintext;
-
-
+        $description = substr($refdesc, $delimpos + strlen($delim));
+        $description = removeSuffix($description, ' - ' . $address);
+        $address = removeSuffix($address, ', Australia');        
+        $description = removeSuffix($description, ' - ' . $address);
+        $address = removeSuffix($address, ', Tasmania');        
+        $description = removeSuffix($description, ' - ' . $address);
+        $record['address'] = $address . ', Tasmania';
+        $record['description'] = $description;
         $record['date_received'] = date('Y-m-d', strtotime($cells[2]->plaintext));
         $record['on_notice_to'] = date('Y-m-d', strtotime($cells[3]->plaintext));
         $record['info_url'] = $cells[4]->find('a')[0]->href;
@@ -53,15 +60,14 @@ foreach ($darow as $thisrow) {
         $record['date_scraped'] = date('Y-m-d');
         scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
     }
-
-  //    $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
-//    if (count($existingRecords) == 0) {
-//        print ("Saving record " . $record['council_reference'] . "\n");
-        //print_r ($record);
+    $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
+    if (count($existingRecords) == 0) {
+        print ("Saving record " . $record['council_reference'] . "\n");
+//        print_r ($record);
         scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
-//    } else {
-//        print ("Skipping already saved record " . $record['council_reference'] . "\n");
-//    }
+    } else {
+        print ("Skipping already saved record " . $record['council_reference'] . "\n");
+    }
 
 }
 ?>
