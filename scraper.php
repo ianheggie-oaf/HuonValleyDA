@@ -39,9 +39,9 @@ foreach ($darow as $thisrow) {
     if (sizeof($cells) > 0) {
         $refdesc = $cells[0]->plaintext;
         $delim = ' - ';
-        $delimpos = stripos($refdesc, $delim);
         //just use space as sometimes not ' - '
-        $record['council_reference'] = substr($refdesc, 0, ' ');
+        $delimpos = stripos($refdesc, ' ');
+        $record['council_reference'] = substr($refdesc, 0, $delimpos);
         $address = $cells[1]->plaintext;
 //remove address from end of description, if it's there
 //also address Australia removed and Tasmania removed
