@@ -23,7 +23,6 @@ $html = scraperwiki::scrape($dapage);
 $dom = new simple_html_dom();
 $dom->load($html);
 $darow = $dom->find("/html/body/div/main/table/tbody/tr");
-print 'number of records: ' . sizeof($darow);
 foreach ($darow as $thisrow) {
     //<tr>
     //	<td>DA-6-2015 - Dwelling and Carport - Land - (CT128515-1) directly to the south of 14 Smyley Street, Franklin</td>
@@ -41,16 +40,20 @@ foreach ($darow as $thisrow) {
         $refdesc = $cells[0]->plaintext;
         $delim = ' - ';
         $delimpos = stripos($refdesc, $delim);
-        $record['council_reference'] = substr($refdesc, 0, $delimpos - 1);
+        //just use space as sometimes not ' - '
+        $record['council_reference'] = substr($refdesc, 0, ' ');
         $address = $cells[1]->plaintext;
 //remove address from end of description, if it's there
 //also address Australia removed and Tasmania removed
         $description = substr($refdesc, $delimpos + strlen($delim));
-        $description = removeSuffix($description, ' - ' . $address);
+        $description = removeSuffix($description, $delim . $address);
+//sometimes address has Tasmania, Australia on the end
         $address = removeSuffix($address, ', Australia');        
-        $description = removeSuffix($description, ' - ' . $address);
+        $description = removeSuffix($description, $delim . $address);
+//sometimes address has just Tasmania on the end
         $address = removeSuffix($address, ', Tasmania');        
-        $description = removeSuffix($description, ' - ' . $address);
+//description sometimes includes address with a space-hyphen-space before
+        $description = removeSuffix($description, $delim . $address);
         $record['address'] = $address . ', Tasmania';
         $record['description'] = $description;
         $record['date_received'] = date('Y-m-d', strtotime($cells[2]->plaintext));
@@ -68,6 +71,5 @@ foreach ($darow as $thisrow) {
     } else {
         print ("Skipping already saved record " . $record['council_reference'] . "\n");
     }
-
 }
 ?>
