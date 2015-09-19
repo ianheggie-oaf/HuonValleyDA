@@ -43,9 +43,9 @@ foreach ($darow as $thisrow) {
         $delimpos = stripos($refdesc, ' ');
         $record['council_reference'] = substr($refdesc, 0, $delimpos);
         $address = $cells[1]->plaintext;
+//can't just use length of delim as don't know how many space of hyphen to strip
+        $description = trim(substr($refdesc, $delimpos + 1), ' -');
 //remove address from end of description, if it's there
-//also address Australia removed and Tasmania removed
-        $description = substr($refdesc, $delimpos + strlen($delim));
         $description = removeSuffix($description, $delim . $address);
 //sometimes address has Tasmania, Australia on the end
         $address = removeSuffix($address, ', Australia');        
@@ -66,7 +66,7 @@ foreach ($darow as $thisrow) {
     $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
     if (count($existingRecords) == 0) {
         print ("Saving record " . $record['council_reference'] . "\n");
-//        print_r ($record);
+        print_r ($record);
         scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
     } else {
         print ("Skipping already saved record " . $record['council_reference'] . "\n");
