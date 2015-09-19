@@ -66,7 +66,7 @@ foreach ($darow as $thisrow) {
     $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
     if (count($existingRecords) == 0) {
         print ("Saving record " . $record['council_reference'] . "\n");
-        print_r ($record);
+//        print_r ($record);
         scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
     } else {
         print ("Skipping already saved record " . $record['council_reference'] . "\n");
