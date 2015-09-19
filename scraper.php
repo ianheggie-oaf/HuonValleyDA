@@ -34,7 +34,18 @@ foreach ($darow as $thisrow) {
         $delimpos = stripos($refdesc, $delim);
         $record['council_reference'] = substr($refdesc, 0, $delimpos - 1);
         $record['description'] = substr($refdesc, $delimpos + strlen($delim));
+
+//remove address from end of description, if it's there
+//also address Australia removed and Tasmania removed
+//remember to remove any trailing delimiter
+//if no easier way, then reverse strings and check for strpos = 0
+//function removesuffix(target, suffix)
+//posrstr
+
+
         $record['address'] = $cells[1]->plaintext;
+
+
         $record['date_received'] = date('Y-m-d', strtotime($cells[2]->plaintext));
         $record['on_notice_to'] = date('Y-m-d', strtotime($cells[3]->plaintext));
         $record['info_url'] = $cells[4]->find('a')[0]->href;
