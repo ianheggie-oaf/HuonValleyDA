@@ -54,8 +54,8 @@ foreach ($darow as $thisrow) {
         $address = removeSuffix($address, ', Tasmania');        
 //description sometimes includes address with a space-hyphen-space before
         $description = removeSuffix($description, $delim . $address);
-        $record['address'] = htmlspecialchars($address . ', Tasmania');
-        $record['description'] = htmlspecialchars($description);
+        $record['address'] = $address . ', Tasmania';
+        $record['description'] = $description;
         $record['date_received'] = date('Y-m-d', strtotime($cells[2]->plaintext));
         $record['on_notice_to'] = date('Y-m-d', strtotime($cells[3]->plaintext));
         $record['info_url'] = $cells[4]->find('a')[0]->href;
