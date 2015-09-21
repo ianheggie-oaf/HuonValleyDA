@@ -61,7 +61,6 @@ foreach ($darow as $thisrow) {
         $record['info_url'] = $cells[4]->find('a')[0]->href;
         $record['comment_url'] = 'http://www.huonvalley.tas.gov.au/services/planning-2/how-to-make-a-representation/';
         $record['date_scraped'] = date('Y-m-d');
-        scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
     }
     $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
     if (count($existingRecords) == 0) {
