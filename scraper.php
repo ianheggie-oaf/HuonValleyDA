@@ -54,8 +54,8 @@ foreach ($darow as $thisrow) {
         $address = removeSuffix($address, ', Tasmania');        
 //description sometimes includes address with a space-hyphen-space before
         $description = removeSuffix($description, $delim . $address);
-        $record['address'] = $address . ', Tasmania';
-        $record['description'] = $description;
+        $record['address'] = htmlspecialchars_decode($address . ', Tasmania');
+        $record['description'] = htmlspecialchars_decode($description);
         $record['date_received'] = date('Y-m-d', strtotime($cells[2]->plaintext));
         $record['on_notice_to'] = date('Y-m-d', strtotime($cells[3]->plaintext));
         $record['info_url'] = $cells[4]->find('a')[0]->href;
@@ -63,13 +63,13 @@ foreach ($darow as $thisrow) {
         $record['date_scraped'] = date('Y-m-d');
         scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
     }
-//    $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
-//    if (count($existingRecords) == 0) {
+    $existingRecords = scraperwiki::select("* from data where `council_reference`='" . $record['council_reference'] . "'");
+    if (count($existingRecords) == 0) {
         print ("Saving record " . $record['council_reference'] . "\n");
-        print_r ($record);
+//        print_r ($record);
         scraperwiki::save_sqlite(array('council_reference'), $record, 'data');
-//    } else {
-//        print ("Skipping already saved record " . $record['council_reference'] . "\n");
-//    }
+    } else {
+        print ("Skipping already saved record " . $record['council_reference'] . "\n");
+    }
 }
 ?>
