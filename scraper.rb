@@ -4,6 +4,7 @@ require "mechanize"
 url = "https://www.huonvalley.tas.gov.au/services/planning-2/planningnotices/"
 
 agent = Mechanize.new
+agent.verify_mode = OpenSSL::SSL::VERIFY_NONE
 page = agent.get(url)
 
 page.at("table").search("tr").each do |tr|
