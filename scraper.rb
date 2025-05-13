@@ -10,18 +10,17 @@ def parse_application(accordion_item)
   description = accordion_item.at(".accordion-grid-item__description").inner_text.strip
 
   # Extract address and CT number from the description
-  match = description.match(/(.*)\s+-\s+(.+)\s+\((CT-[^)]+)\)/)
+  match = description.match(/(.*)\s+-\s+(.+)\s+(\(CT-[^)]+\))/)
   
   if match
     council_reference = title
-    description_text = match[1].strip
-    address = match[2].strip
     ct_number = match[3].strip
+    description_text = "#{match[1].strip} #{ct_number}"
+    address = match[2].strip
   else
     council_reference = title
     description_text = description
     address = description.split(" - ").last.strip rescue ""
-    ct_number = ""
   end
 
   # Get more info from the accordion body if available
